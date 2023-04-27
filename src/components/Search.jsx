@@ -1,9 +1,50 @@
 import React from 'react';
 import styled from 'styled-components';
 import { MdSearch } from 'react-icons/md';
-// import { GithubContext } from '../context/context';
+import { GithubContext } from '../context/context';
 const Search = () => {
-  return <h2>search component</h2>
+  const [user, setUser] = React.useState('');
+  const {request, error} = React.useContext(GithubContext)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (user) {
+      // logic
+    }
+  }
+
+  // this gets the current value
+  function handleForm(e) {
+    setUser(e.target.value);
+  }
+  return (
+    <section className="section">
+      <Wrapper className='section-center'>
+        {
+          error.isErrorTrue && (
+            <ErrorWrapper>
+              <p>{error.message}</p>
+            </ErrorWrapper>
+          )
+        }
+        <form onSubmit={handleSubmit}>
+          <div className="form-control">
+            <MdSearch />
+            <input type="text" placeholder='enter githurb user'
+              value={user}
+              onChange={handleForm}
+            />
+            {
+              request > 0 &&
+
+            <button type="submit" >search</button>
+            }
+          </div>
+        </form>
+        <h3>Request :{request}/60</h3>
+      </Wrapper>
+    </section>
+  )
 };
 
 const Wrapper = styled.div`
@@ -71,8 +112,14 @@ const Wrapper = styled.div`
   }
   h3 {
     margin-bottom: 0;
-    color: var(--clr-grey-5);
+    color: white;
     font-weight: 400;
+    font-size:30px;
+      height: 100%;
+      width: 100%;
+      display:flex;
+      align-items: center;
+
   }
 `;
 const ErrorWrapper = styled.article`
