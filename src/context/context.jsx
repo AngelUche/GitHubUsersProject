@@ -15,34 +15,82 @@ function GithubProvider({ children }) {
   const [folowers, seFollowers] = useState(mockFollowers)
   const [repos, setRepos] = useState(mockRepos)
 
+
   // set up the rate request
   const [request, setRequest] = useState(0);
-  const [loading, setloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+
 
   // setting the erroe to be displayed when rate is exceeded
-  const [error, setError] = useState({isErrorTrue:false, message:" "})
+  const [error, setError] = useState({ isErrorTrue: false, message: " " })
+
   
- 
-  useEffect(() => async function fetchData() {
-     try {
-       const response = await axios(`${rootUrl}/rate_limit`);
-       let { rate } = response.data
-       console.log(rate.remaining);
-       setRequest(rate.remaining);
-       if (rate.remaining === 0) {
-      //    throw an error
-        //  ivoking the error 
-         toggleEror(true, "sorry, you have exceeded your hourly search limit")
-       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+
+  // function to get the githubUser from the ApAI when seraching th==fhor the user
+  // returns the types user on the search bar
+  const getGithubUser = async (user) => {
+    // toggle the error message if no user is found
+    toggleEror();
+    setIsLoading(true)
+    const response = await axios(`${rootUrl}/users/${user}`).catch((error) => console.log(error));
+      if (response) {
+        setGithubUsers(response.data)
+        const { login, followers_url } = response.data;
+        
+        // setting up the login to fecth the repo api
+        axios(`${rootUrl}/users/${login}/repos?per_page=100`).
+          then((response) => {
+            setRepos(response.data)
+            console.log(response)
+          })
+        
+        
+        // https://api.github.com/users/AngelUche/followers
+
+           // setting up the login to fecth the followers api
+        axios(`${followers_url}?per_page=100`).
+          then((response) => {
+            seFollowers(response.data)
+            console.log(response)
+          })
+
+      } else {
+        toggleEror(true, 'sorry there is no such user')
+      }
+    CheckRequest()
+    setIsLoading(false)
+  }
+  
+  const CheckRequest = () => {
+    axios(`${rootUrl}/rate_limit`).then(({ data }) => {
+
+      // destructuirng the remaing request from the data
+      let { rate: { remaining } } = data;
+      setRequest(remaining);
+      if (remaining === 0) {
+        //    throw an error
+        toggleEror(true, "sorry, you have exceeded your hourly search limit")
+      }
+    }).catch((error) => console.log(error))
+  };
+  useEffect(CheckRequest, []);
+
+      
+      
 
   function toggleEror(isErrorTrue = false, message= '') {
     setError({isErrorTrue, message});
   }
-  const values = { githubUsers, folowers, repos, request, error }
+  const values = {
+    githubUsers,
+    folowers,
+    repos,
+    request,
+    error,
+    getGithubUser,
+    isLoading
+  }
   return (
     <GithubContext.Provider
       value={values}>

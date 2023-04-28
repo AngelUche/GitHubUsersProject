@@ -4,12 +4,14 @@ import { MdSearch } from 'react-icons/md';
 import { GithubContext } from '../context/context';
 const Search = () => {
   const [user, setUser] = React.useState('');
-  const {request, error} = React.useContext(GithubContext)
+  const {request, error, getGithubUser, isLoading} = React.useContext(GithubContext)
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
     if (user) {
       // logic
+      getGithubUser(user)
     }
   }
 
@@ -32,10 +34,11 @@ const Search = () => {
             <MdSearch />
             <input type="text" placeholder='enter githurb user'
               value={user}
+              required
               onChange={handleForm}
             />
             {
-              request > 0 &&
+              request > 0 && !isLoading &&
 
             <button type="submit" >search</button>
             }
@@ -112,7 +115,7 @@ const Wrapper = styled.div`
   }
   h3 {
     margin-bottom: 0;
-    color: white;
+    color: black;
     font-weight: 400;
     font-size:30px;
       height: 100%;

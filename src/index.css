@@ -59,7 +59,7 @@ Global Styles
 ===============
 */
 body{
-  background-color: rgba(0, 0, 0, 0.9) !important;
+  /* background-color: rgba(0, 0, 0, 0.9) !important; */
 }
 *,
 ::after,
