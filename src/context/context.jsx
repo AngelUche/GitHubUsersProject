@@ -20,8 +20,6 @@ function GithubProvider({ children }) {
   const [request, setRequest] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-
-
   // setting the erroe to be displayed when rate is exceeded
   const [error, setError] = useState({ isErrorTrue: false, message: " " })
 
@@ -33,27 +31,37 @@ function GithubProvider({ children }) {
     // toggle the error message if no user is found
     toggleEror();
     setIsLoading(true)
+
+    // fetching the repos and followers from the api
     const response = await axios(`${rootUrl}/users/${user}`).catch((error) => console.log(error));
       if (response) {
         setGithubUsers(response.data)
         const { login, followers_url } = response.data;
         
         // setting up the login to fecth the repo api
-        axios(`${rootUrl}/users/${login}/repos?per_page=100`).
-          then((response) => {
-            setRepos(response.data)
-            console.log(response)
-          })
-        
-        
         // https://api.github.com/users/AngelUche/followers
 
            // setting up the login to fecth the followers api
-        axios(`${followers_url}?per_page=100`).
-          then((response) => {
-            seFollowers(response.data)
-            console.log(response)
-          })
+        // axios(`${followers_url}?per_page=100`).
+        //   then((response) => {
+        //     seFollowers(response.data)
+        //     console.log(response)
+        //   })
+
+        // this is used tp fetch more than one urls 
+        await Promise.allSettled([axios(`${rootUrl}/users/${login}/repos?per_page=100`),
+          axios(`${followers_url}?per_page=100`)]).then((result) => {
+            console.log(result);
+            const [repos, followers] = result;
+            console.log(repos);
+            const status = 'fulfilled';
+            if (repos.status === status) {
+              setRepos(repos.value.data)
+            }
+              if (followers.status === status) {
+              seFollowers(followers.value.data)
+            }
+        }).catch((error)=>console.log(error))
 
       } else {
         toggleEror(true, 'sorry there is no such user')
@@ -62,6 +70,7 @@ function GithubProvider({ children }) {
     setIsLoading(false)
   }
   
+  // cfunction to get the request limit of the user
   const CheckRequest = () => {
     axios(`${rootUrl}/rate_limit`).then(({ data }) => {
 
