@@ -11,7 +11,7 @@ const Navbar = () => {
       isUserTrue && user.picture &&<img src={user.picture} alt={user.name} />
     }
      {
-      isUserTrue && user.name && <h4 >Welcoem! <strong>{ user.name.toLocaleUpperCase()}</strong></h4>
+      isUserTrue && user.name && <h4 >Welcome! <strong>{ user.name.toLocaleUpperCase()}</strong></h4>
     }
      {
       isUserTrue ?
