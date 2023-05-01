@@ -10,10 +10,11 @@ import { Auth0Provider } from "@auth0/auth0-react";
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Auth0Provider
-       domain="dev-qgagcss7z0yb05dn.us.auth0.com"
+      domain="dev-qgagcss7z0yb05dn.us.auth0.com"
       clientId="Gr9rps42wkCuJjs9m9yQUJ6T78R5KjiB"
-    authorizationParams={{
-      redirect_uri: window.location.origin
+      cacheLocation= 'CacheLocation'
+      authorizationParams={{
+      redirect_uri: window.location.origin,
     }}
     >
       <GithubProvider>
