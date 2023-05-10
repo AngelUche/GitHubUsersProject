@@ -12,7 +12,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Auth0Provider
       domain="dev-qgagcss7z0yb05dn.us.auth0.com"
       clientId="Gr9rps42wkCuJjs9m9yQUJ6T78R5KjiB"
-      cacheLocation= 'CacheLocation'
       authorizationParams={{
       redirect_uri: window.location.origin,
     }}
